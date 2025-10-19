@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAGHIM Widget Test - GitHub Pages</title>
+    <meta name="description" content="Test page for RAGHIM AI Chat Widget on GitHub Pages">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            font-size: 1.2em;
+        }
+        
+        .info-box {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .info-box h3 {
+            margin-top: 0;
+            color: #ffd700;
+        }
+        
+        .test-instructions {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .test-instructions h4 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+        
+        .test-instructions ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .test-instructions li {
+            margin: 5px 0;
+        }
+        
+        .status {
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .status.success {
+            background: rgba(76, 175, 80, 0.3);
+            border: 1px solid #4CAF50;
+        }
+        
+        .status.error {
+            background: rgba(244, 67, 54, 0.3);
+            border: 1px solid #f44336;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            opacity: 0.7;
+            font-size: 0.9em;
+        }
+        
+        /* Widget Styles */
+        .rag-widget-modern {
+            font-family: Inter, sans-serif;
+            font-size: 14px;
+            background-color: #ffffff;
+            color: #1a202c;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 400px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: fixed;
+            bottom: 20px; right: 20px;
+            z-index: 1000;
+        }
+        
+        .rag-widget-header {
+            background-color: #667eea;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .rag-widget-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+        
+        .rag-widget-controls button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+            margin-left: 5px;
+        }
+        
+        .rag-widget-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            background-color: #f8f9fa;
+        }
+        
+        .rag-message {
+            margin: 10px 0;
+            padding: 8px 12px;
+            border-radius: 18px;
+            max-width: 80%;
+        }
+        
+        .rag-message.user {
+            background-color: #667eea;
+            color: white;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        
+        .rag-message.assistant {
+            background-color: white;
+            color: #1a202c;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .rag-widget-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .rag-widget-input input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            outline: none;
+        }
+        
+        .rag-widget-input button {
+            background-color: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-left: 8px;
+            cursor: pointer;
+        }
+        
+        .rag-welcome-message {
+            background-color: #e3f2fd;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .rag-typing-indicator {
+            display: none;
+            padding: 10px;
+            font-style: italic;
+            color: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 RAGHIM Widget Test</h1>
+        <p class="subtitle">Testing AI Chat Widget on GitHub Pages</p>
+        
+        <div class="info-box">
+            <h3>📋 Test Information</h3>
+            <p><strong>Widget Name:</strong> test_widget1</p>
+            <p><strong>API Endpoint:</strong> http://34.65.50.3/api/chat/widget/</p>
+            <p><strong>Embed Token:</strong> qIMqOHjlj6ZU7KBY2yQCR7Z_xErC6bsqeE153nuy9Es</p>
+            <p><strong>Widget ID:</strong> bcb16eae-b483-4447-98de-707efed8116f</p>
+        </div>
+        
+        <div class="test-instructions">
+            <h4>🧪 How to Test</h4>
+            <ul>
+                <li>Look for the chat widget in the bottom-right corner</li>
+                <li>Try sending a message like "Hello" or "What is RAG?"</li>
+                <li>Check browser console (F12) for any errors</li>
+                <li>Verify the widget responds with AI-generated content</li>
+                <li>Test the minimize (─) and close (×) buttons</li>
+            </ul>
+        </div>
+        
+        <div id="connection-status" class="status">
+            <p>🔍 Checking connection...</p>
+        </div>
+        
+        <div class="footer">
+            <p>Powered by RAGHIM AI • GitHub Pages Test Environment</p>
+            <p>If you see this page, the widget should be working in the bottom-right corner!</p>
+        </div>
+    </div>
+
+    <!-- RAGHIM Chat Widget -->
+    <div id="rag-chat-widget" class="rag-widget-modern">
+        <div class="rag-widget-header">
+            <h3>test_widget1</h3>
+            <div class="rag-widget-controls">
+                <button id="minimize-btn">−</button>
+                <button id="close-btn">×</button>
+            </div>
+        </div>
+        <div class="rag-widget-messages" id="messages-container">
+            <div class="rag-welcome-message">
+                <p>Hello! I'm ready to be of service.</p>
+            </div>
+        </div>
+        <div class="rag-widget-input">
+            <input type="text" id="message-input" placeholder="Type your message..." />
+            <button id="send-btn">Send</button>
+        </div>
+    </div>
+    
+    <script>
+        // Connection status check
+        async function checkConnection() {
+            const statusDiv = document.getElementById('connection-status');
+            try {
+                const response = await fetch('http://34.65.50.3/api/health', {
+                    method: 'GET',
+                    mode: 'no-cors' // This will always succeed, but we can't read the response
+                });
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = '<p>✅ Connection to RAGHIM server successful!</p>';
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = '<p>❌ Connection failed. Check if the RAGHIM server is running.</p>';
+            }
+        }
+        
+        // Check connection on page load
+        checkConnection();
+        
+        // RAGHIM Chat Widget
+        class RAGChatWidget {
+            constructor() {
+                // Use the configured backend URL
+                this.apiUrl = "http://34.65.50.3/api";
+                this.embedToken = "qIMqOHjlj6ZU7KBY2yQCR7Z_xErC6bsqeE153nuy9Es";
+                this.widgetId = "bcb16eae-b483-4447-98de-707efed8116f";
+                this.features = {"show_sources": true, "enable_history": true, "show_typing_indicator": true, "enable_file_upload": false, "show_collection_switcher": false, "enable_feedback": true, "show_timestamps": false, "enable_search": true, "enable_handoff": true};
+                this.conversationId = null; // Track conversation ID for history
+                this.isSending = false; // Add debouncing flag
+                this.lastMessageTime = 0; // Add timestamp tracking
+                console.log('Widget initialized with API URL:', this.apiUrl);
+                console.log('Widget initialized with embed token:', this.embedToken);
+                this.init();
+            }
+            
+            init() {
+                this.messageContainer = document.getElementById('messages-container');
+                this.messageInput = document.getElementById('message-input');
+                this.sendButton = document.getElementById('send-btn');
+                this.minimizeButton = document.getElementById('minimize-btn');
+                this.closeButton = document.getElementById('close-btn');
+                
+                this.bindEvents();
+            }
+            
+            bindEvents() {
+                this.sendButton.addEventListener('click', () => this.sendMessage());
+                this.messageInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.sendMessage();
+                });
+                this.minimizeButton.addEventListener('click', () => this.minimize());
+                this.closeButton.addEventListener('click', () => this.close());
+            }
+            
+            async sendMessage() {
+                const message = this.messageInput.value.trim();
+                if (!message || this.isSending) return;
+                
+                // Additional debouncing: prevent rapid successive calls
+                const now = Date.now();
+                if (this.lastMessageTime && (now - this.lastMessageTime) < 1000) {
+                    console.log('Message debounced - too soon after last message');
+                    return;
+                }
+                this.lastMessageTime = now;
+                
+                this.isSending = true;
+                this.addMessage(message, 'user');
+                this.messageInput.value = '';
+                
+                if (this.features.show_typing_indicator) {
+                    this.showTypingIndicator();
+                }
+                
+                try {
+                    console.log('Sending message to:', `${this.apiUrl}/chat/widget/${this.embedToken}`);
+                    console.log('Message:', message);
+                    
+                    const response = await fetch(`${this.apiUrl}/chat/widget/${this.embedToken}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ 
+                            message: message,
+                            conversation_id: this.conversationId // Include conversation ID for history
+                        })
+                    });
+                    
+                    console.log('Response status:', response.status);
+                    console.log('Response headers:', response.headers);
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('Response data:', data);
+                        
+                        // Update conversation ID for next message
+                        if (data.conversation_id) {
+                            this.conversationId = data.conversation_id;
+                            console.log('Updated conversation ID:', this.conversationId);
+                        }
+                        
+                        this.addMessage(data.response, 'assistant', data.sources);
+                    } else {
+                        const errorText = await response.text();
+                        console.error('API Error:', response.status, errorText);
+                        this.addMessage('Sorry, I encountered an error. Please try again.', 'assistant');
+                    }
+                } catch (error) {
+                    console.error('Network Error:', error);
+                    this.addMessage('Sorry, I encountered an error. Please try again.', 'assistant');
+                } finally {
+                    this.isSending = false;
+                    if (this.features.show_typing_indicator) {
+                        this.hideTypingIndicator();
+                    }
+                }
+            }
+            
+            addMessage(content, role, sources = null) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `rag-message ${role}`;
+                messageDiv.textContent = content;
+                
+                if (sources && this.features.show_sources && sources.length > 0) {
+                    const sourcesDiv = document.createElement('div');
+                    sourcesDiv.className = 'rag-sources';
+                    sourcesDiv.innerHTML = '<small>Sources: ' + sources.map(s => s.metadata.source || 'Unknown').join(', ') + '</small>';
+                    messageDiv.appendChild(sourcesDiv);
+                }
+                
+                this.messageContainer.appendChild(messageDiv);
+                this.messageContainer.scrollTop = this.messageContainer.scrollHeight;
+            }
+            
+            showTypingIndicator() {
+                const indicator = document.createElement('div');
+                indicator.className = 'rag-typing-indicator';
+                indicator.id = 'typing-indicator';
+                indicator.textContent = 'Assistant is typing...';
+                this.messageContainer.appendChild(indicator);
+                indicator.style.display = 'block';
+            }
+            
+            hideTypingIndicator() {
+                const indicator = document.getElementById('typing-indicator');
+                if (indicator) {
+                    indicator.remove();
+                }
+            }
+            
+            minimize() {
+                document.getElementById('rag-chat-widget').style.display = 'none';
+            }
+            
+            close() {
+                document.getElementById('rag-chat-widget').remove();
+            }
+        }
+        
+        // Initialize widget
+        new RAGChatWidget();
+    </script>
+</body>
+</html>

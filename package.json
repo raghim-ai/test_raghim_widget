@@ -1,0 +1,25 @@
+{
+  "name": "raghim-widget-test",
+  "version": "1.0.0",
+  "description": "Test page for RAGHIM AI Chat Widget on GitHub Pages",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo 'Open index.html in browser to test widget'",
+    "deploy": "echo 'Push to GitHub and enable Pages'"
+  },
+  "keywords": [
+    "raghim",
+    "ai",
+    "chat",
+    "widget",
+    "github-pages",
+    "test"
+  ],
+  "author": "RAGHIM Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR_USERNAME/github_widget_test.git"
+  },
+  "homepage": "https://YOUR_USERNAME.github.io/github_widget_test"
+}
