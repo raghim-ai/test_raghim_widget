@@ -335,21 +335,17 @@
                     console.log('Sending message to:', `${this.apiUrl}/chat/widget/${this.embedToken}`);
                     console.log('Message:', message);
                     
-                    const response = await fetch(`${this.apiUrl}/chat/widget/${this.embedToken}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ 
-                            message: message,
-                            conversation_id: this.conversationId // Include conversation ID for history
-                        })
-                    });
+                    // Try primary API URL first
+                    let response = await this.tryApiCall(`${this.apiUrl}/chat/widget/${this.embedToken}`, message);
                     
-                    console.log('Response status:', response.status);
-                    console.log('Response headers:', response.headers);
+                    // If failed due to mixed content, try HTTPS fallback
+                    if (!response && this.apiUrl.startsWith('http://')) {
+                        console.log('Primary API failed, trying HTTPS fallback...');
+                        const fallbackUrl = this.apiUrl.replace('http://', 'https://');
+                        response = await this.tryApiCall(`${fallbackUrl}/chat/widget/${this.embedToken}`, message);
+                    }
                     
-                    if (response.ok) {
+                    if (response && response.ok) {
                         const data = await response.json();
                         console.log('Response data:', data);
                         
@@ -361,8 +357,6 @@
                         
                         this.addMessage(data.response, 'assistant', data.sources);
                     } else {
-                        const errorText = await response.text();
-                        console.error('API Error:', response.status, errorText);
                         this.addMessage('Sorry, I encountered an error. Please try again.', 'assistant');
                     }
                 } catch (error) {
@@ -373,6 +367,25 @@
                     if (this.features.show_typing_indicator) {
                         this.hideTypingIndicator();
                     }
+                }
+            }
+            
+            async tryApiCall(url, message) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ 
+                            message: message,
+                            conversation_id: this.conversationId
+                        })
+                    });
+                    return response;
+                } catch (error) {
+                    console.log('API call failed:', error.message);
+                    return null;
                 }
             }
             
