@@ -338,12 +338,8 @@
                     // Try primary API URL first
                     let response = await this.tryApiCall(`${this.apiUrl}/chat/widget/${this.embedToken}`, message);
                     
-                    // If failed due to mixed content, try HTTPS fallback
-                    if (!response && this.apiUrl.startsWith('http://')) {
-                        console.log('Primary API failed, trying HTTPS fallback...');
-                        const fallbackUrl = this.apiUrl.replace('http://', 'https://');
-                        response = await this.tryApiCall(`${fallbackUrl}/chat/widget/${this.embedToken}`, message);
-                    }
+                    // Mixed content bypass disabled for offline applications
+                    // HTTPS fallback would timeout since server only serves HTTP
                     
                     if (response && response.ok) {
                         const data = await response.json();
@@ -385,6 +381,35 @@
                     return response;
                 } catch (error) {
                     console.log('API call failed:', error.message);
+                    return null;
+                }
+            }
+            
+            async tryApiCallWithTimeout(url, message, timeoutMs) {
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+                    
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ 
+                            message: message,
+                            conversation_id: this.conversationId
+                        }),
+                        signal: controller.signal
+                    });
+                    
+                    clearTimeout(timeoutId);
+                    return response;
+                } catch (error) {
+                    if (error.name === 'AbortError') {
+                        console.log('API call timed out after', timeoutMs, 'ms');
+                    } else {
+                        console.log('API call failed:', error.message);
+                    }
                     return null;
                 }
             }
