@@ -210,7 +210,7 @@
         <div class="info-box">
             <h3>📋 Test Information</h3>
             <p><strong>Widget Name:</strong> test_widget1</p>
-            <p><strong>API Endpoint:</strong> https://34.65.50.3:8081/api/chat/widget/</p>
+            <p><strong>API Endpoint:</strong> http://34.65.50.3/api/chat/widget/</p>
             <p><strong>Embed Token:</strong> qIMqOHjlj6ZU7KBY2yQCR7Z_xErC6bsqeE153nuy9Es</p>
             <p><strong>Widget ID:</strong> bcb16eae-b483-4447-98de-707efed8116f</p>
         </div>
@@ -261,7 +261,7 @@
         async function checkConnection() {
             const statusDiv = document.getElementById('connection-status');
             try {
-                const response = await fetch('https://34.65.50.3:8081/api/health', {
+                const response = await fetch('http://34.65.50.3/api/health', {
                     method: 'GET',
                     mode: 'no-cors' // This will always succeed, but we can't read the response
                 });
@@ -280,7 +280,7 @@
         class RAGChatWidget {
             constructor() {
                 // Use the configured backend URL
-                this.apiUrl = "https://34.65.50.3:8081/api";
+                this.apiUrl = "http://34.65.50.3/api";
                 this.embedToken = "qIMqOHjlj6ZU7KBY2yQCR7Z_xErC6bsqeE153nuy9Es";
                 this.widgetId = "bcb16eae-b483-4447-98de-707efed8116f";
                 this.features = {"show_sources": true, "enable_history": true, "show_typing_indicator": true, "enable_file_upload": false, "show_collection_switcher": false, "enable_feedback": true, "show_timestamps": false, "enable_search": true, "enable_handoff": true};
@@ -338,8 +338,12 @@
                     // Try primary API URL first
                     let response = await this.tryApiCall(`${this.apiUrl}/chat/widget/${this.embedToken}`, message);
                     
-                    // Mixed content bypass disabled for offline applications
-                    // HTTPS fallback would timeout since server only serves HTTP
+                    // Mixed content bypass: try HTTPS fallback if HTTP fails
+                    if (!response && this.apiUrl.startsWith('http://')) {
+                        console.log('Primary API failed, trying HTTPS fallback...');
+                        const fallbackUrl = this.apiUrl.replace('http://', 'https://');
+                        response = await this.tryApiCall(`${fallbackUrl}/chat/widget/${this.embedToken}`, message);
+                    }
                     
                     if (response && response.ok) {
                         const data = await response.json();
@@ -381,35 +385,6 @@
                     return response;
                 } catch (error) {
                     console.log('API call failed:', error.message);
-                    return null;
-                }
-            }
-            
-            async tryApiCallWithTimeout(url, message, timeoutMs) {
-                try {
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-                    
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ 
-                            message: message,
-                            conversation_id: this.conversationId
-                        }),
-                        signal: controller.signal
-                    });
-                    
-                    clearTimeout(timeoutId);
-                    return response;
-                } catch (error) {
-                    if (error.name === 'AbortError') {
-                        console.log('API call timed out after', timeoutMs, 'ms');
-                    } else {
-                        console.log('API call failed:', error.message);
-                    }
                     return null;
                 }
             }
